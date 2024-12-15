@@ -1,0 +1,101 @@
+[tool.poetry]
+name = "Files folder API"
+version = "0.1.0"
+description = ""
+authors = ["Yura Mironchick"]
+readme = "README.md"
+
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.111.1"
+uvicorn = {version = "^0.30.1", extras = ["standard"]}
+httpx = "^0.27.0"
+alembic = "^1.13.2"
+asyncpg = "^0.29.0"
+psycopg2-binary = "^2.9.9"
+sqlalchemy = {version = "^2.0.31", extras = ["asyncio"]}
+asyncpg-listen = "^0.0.6"
+pydantic = "^2.8.2"
+pydantic-settings = "^2.3.4"
+pycryptodome = "3.21.0"
+bcrypt = "4.2.1"
+
+[tool.poetry.group.dev.dependencies]
+jupyter = "^1.0.0"
+pytest = "^8.2.2"
+pytest-cov = "^5.0.0"
+pytest-mock = "^3.14.0"
+pytest-asyncio = "0.21.2"
+pytest-alembic = "^0.11.0"
+polyfactory = "^2.16.2"
+schemathesis = "^3.32.2"
+starlette-testclient = "^0.4.1"
+# To help with VSCode pytest test discovery - https://github.com/microsoft/vscode-python/issues/6891
+# Useful reference - https://stackoverflow.com/questions/55837922/vscode-pytest-test-discovery-fails
+pytest-dotenv = "^0.5.2"
+ruff = "^0.5.2"
+
+[tool.ruff]
+line-length = 120
+extend-exclude = ["__init__.py", "migrations/versions/*"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.ruff.lint]
+ignore = [
+    "B008",  # do not perform function calls in argument defaults
+    "C901",  # too complex
+    "RUF100",  # empty noqa
+]
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "I",  # isort
+    "C",  # flake8-comprehensions
+    "B",  # flake8-bugbear
+    "N",  # pep8-naming
+    "A",  # flake8-builtins
+    "PIE",  # flake8-pie
+    "RUF",  # Ruff rules
+    "C4",  # flake8-comprehensions
+]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["E401", "E402"]
+
+[tool.pytest.ini_options]
+env_files = [".pytest_env_local", ".pytest_env"]
+asyncio_mode = "auto"
+filterwarnings = [
+    "ignore:Deprecated call to `pkg_resources\\.declare_namespace\\('.*'\\):DeprecationWarning",
+    "ignore::DeprecationWarning:google.rpc",
+]
+# MORE - https://github.com/googleapis/google-cloud-python/issues/11184#issuecomment-1640884088
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.mypy]
+plugins = [
+  "pydantic.mypy"
+]
+
+follow_imports = "silent"
+warn_redundant_casts = true
+warn_unused_ignores = true
+
+[[tool.mypy.overrides]]
+module = "airflow_client.*"
+ignore_missing_imports = true
+
+[tool.pydantic-mypy]
+init_forbid_extra = true
+init_typed = true
+warn_required_dynamic_aliases = true
+
+[tool.coverage.run]
+omit = ["**/__init__.py"]

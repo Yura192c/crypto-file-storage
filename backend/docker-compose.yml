@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+      POSTGRES_DB: crypto-folder
+    ports:
+      - "35432:5432"
+
+  fastapi-application:
+    container_name: crypto-backend
+    env_file:
+      - ./api/.env
+    build:
+      context: ./api
+      dockerfile: ../build/Dockerfile
+    init: true
+    command:
+      [
+        "/bin/sh",
+        "-c",
+        "uvicorn app.main:app --host 0.0.0.0 --port 8080 --reload --timeout-graceful-shutdown 1",
+      ]
+    ports:
+      - "8080:8080"
+    expose:
+      - 8080
+    volumes:
+      - ./api/app:/code/app
